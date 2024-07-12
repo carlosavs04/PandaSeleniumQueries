@@ -1,0 +1,29 @@
+{
+    "search_url": "https://es.wikipedia.org/",
+    "actions": [
+        {
+            "selector_type": "ID",
+            "selector_value": "searchInput",
+            "action_type": "send_keys",
+            "value": "Copa Mundial de Fútbol"
+        },
+        {
+            "selector_type": "CLASS_NAME",
+            "selector_value": "cdx-search-input__end-button",
+            "action_type": "click"
+        }
+    ],
+    "data_structure": {
+        "selector_type": "CSS_SELECTOR",
+        "selector_value": "table[cellspacing='0']",
+        "row_selector": "tr",
+        "columns": [
+            { "name": "Año", "index": 0 },
+            { "name": "Sede", "index": 1 },
+            { "name": "Campeón", "index": 2 },
+            { "name": "Resultado", "index": 3 },
+            { "name": "Subcampeón", "index": 4 }
+        ]
+    },
+    "output_file": "world_cup.xlsx"
+}

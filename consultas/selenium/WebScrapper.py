@@ -4,7 +4,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
-import pandas as pd
 import time
 
 class WebScrapper:
@@ -16,22 +15,26 @@ class WebScrapper:
         self.driver.get(url)
         self.driver.maximize_window()
 
-    def search_term(self, search_box_selector, search_button_selector, search_term):
+    def perform_action(self, element_selector, action_type, value=None):
         wait = WebDriverWait(self.driver, 20)
-        search_box = wait.until(EC.element_to_be_clickable(search_box_selector))
-        search_box.send_keys(search_term)
-        search_button = wait.until(EC.element_to_be_clickable(search_button_selector))
-        search_button.click()
+        element = wait.until(EC.element_to_be_clickable(element_selector))
 
+        if action_type == 'click':
+            element.click()
+        elif action_type == 'send_keys' and value:
+            element.send_keys(value)
+        else:
+            raise ValueError('Acción no soportada')
+        
         time.sleep(5)
 
-    def fetch_data_table(self, table_selector, columns):
+    def fetch_data_structure(self, structure_selector, row_selector, columns):
         try: 
-            table = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(table_selector))
-            rows = table.find_elements(By.TAG_NAME, 'tr')
+            structure = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(structure_selector))
+            rows = structure.find_elements(By.CSS_SELECTOR, row_selector)
 
             for row in rows[1:]:
-                cells = row.find_elements(By.TAG_NAME, 'td')
+                cells = row.find_elements(By.TAG_NAME, 'td') if row_selector == 'tr' else row.find_elements(By.TAG_NAME, 'div')
                 if len(cells) >= len(columns):
                     row_data = {}
                     for column_name, column_index in columns:
@@ -40,36 +43,8 @@ class WebScrapper:
         except Exception as e:
             print(f'Error al obtener los datos de la tabla: {e}')
 
-    def export_to_excel(self, file_name):
-        df = pd.DataFrame(self.data)
-        df.to_excel(file_name, index=False)
-        print(f'Archivo {file_name} creado con éxito')
+    def get_data(self):
+        return self.data
     
     def close(self):
         self.driver.quit()
-
-if __name__ == '__main__':
-    scrapper = WebScrapper()
-
-    search_url = 'https://es.wikipedia.org/'
-    search_term = 'Copa Mundial de Fútbol'
-    search_box_selector = (By.ID, 'searchInput')
-    search_button_selector = (By.CLASS_NAME, 'cdx-search-input__end-button')
-    table_selector = (By.CSS_SELECTOR, "table[cellspacing='0']")
-
-    colums = [
-        ("Año", 0),
-        ("Sede", 1),
-        ("Campeón", 2),
-        ("Resultado", 3),
-        ("Subcampeón", 4),
-    ]
-
-    try: 
-        scrapper.load_page(search_url)
-        scrapper.search_term(search_box_selector, search_button_selector, search_term)
-        scrapper.fetch_data_table(table_selector, colums)
-        scrapper.export_to_excel('copa_mundial.xlsx')
-    
-    finally: 
-        scrapper.close()
