@@ -29,17 +29,43 @@ class WebScrapper:
         time.sleep(5)
 
     def fetch_data_structure(self, structure_selector, row_selector, columns):
-        try: 
+        try:
             structure = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(structure_selector))
             rows = structure.find_elements(By.CSS_SELECTOR, row_selector)
 
-            for row in rows[1:]:
-                cells = row.find_elements(By.TAG_NAME, 'td') if row_selector == 'tr' else row.find_elements(By.TAG_NAME, 'div')
-                if len(cells) >= len(columns):
-                    row_data = {}
-                    for column_name, column_index in columns:
-                        row_data[column_name] = cells[column_index].text
+            for row in rows:
+                row_data = {}
+                valid_row = True
+                for column_info in columns:
+                    column_name = column_info['name']
+                    column_selector = column_info['selector']
+                    attribute = column_info['attribute']
+                    try:
+                        cell = row.find_element(By.CSS_SELECTOR, column_selector)
+                        if cell:
+                            if attribute == 'textContent':
+                                cell_value = cell.text.strip()
+                            elif attribute == 'title':
+                                cell_value = cell.get_attribute('title').strip()
+                            else:
+                                cell_value = cell.get_attribute(attribute).strip()
+
+                            if cell_value in ['', None]:
+                                valid_row = False
+                            
+                            row_data[column_name] = cell_value
+
+                        else:
+                            row_data[column_name] = None
+                            valid_row = False
+
+                    except Exception as e:
+                        row_data[column_name] = None
+                        valid_row = False
+
+                if valid_row:
                     self.data.append(row_data)
+
         except Exception as e:
             print(f'Error al obtener los datos de la tabla: {e}')
 

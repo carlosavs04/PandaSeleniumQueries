@@ -18,11 +18,11 @@
         "selector_value": "table[cellspacing='0']",
         "row_selector": "tr",
         "columns": [
-            { "name": "Año", "index": 0 },
-            { "name": "Sede", "index": 1 },
-            { "name": "Campeón", "index": 2 },
-            { "name": "Resultado", "index": 3 },
-            { "name": "Subcampeón", "index": 4 }
+            { "name": "Año", "selector": "td:nth-child(1)", "attribute": "textContent" },
+            { "name": "Sede", "selector": "td:nth-child(2)", "attribute": "textContent" },
+            { "name": "Campeón", "selector": "td:nth-child(3)", "attribute": "textContent" },
+            { "name": "Resultado", "selector": "td:nth-child(4)", "attribute": "textContent" },
+            { "name": "Subcampeón", "selector": "td:nth-child(5)", "attribute": "textContent" }
         ]
     },
     "output_file": "world_cup.xlsx"
