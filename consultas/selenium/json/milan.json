@@ -1,0 +1,34 @@
+{
+    "search_url": "https://www.transfermarkt.mx/",
+    "actions": [
+        {
+            "selector_type": "NAME",
+            "selector_value": "query",
+            "action_type": "send_keys",
+            "value": "AC Milan"
+        },
+        {
+            "selector_type": "CSS_SELECTOR",
+            "selector_value": ".tm-header__input--search-send",
+            "action_type": "click"
+        },
+        {
+            "selector_type": "CSS_SELECTOR",
+            "selector_value": ".items tbody tr:nth-child(1) .hauptlink a",
+            "action_type": "click"
+        }
+    ],
+    "data_structure": {
+        "selector_type": "CSS_SELECTOR",
+        "selector_value": "table.items",
+        "row_selector": "tbody tr",
+        "columns": [
+            { "name": "Número", "selector": ".zentriert.rueckennummer .rn_nummer", "attribute": "textContent" },
+            { "name": "Jugador", "selector": ".posrela a", "attribute": "textContent" },
+            { "name": "Fecha de nacimiento", "selector": ".zentriert:nth-child(3)", "attribute": "textContent" },
+            { "name": "País", "selector": ".zentriert img.flaggenrahmen", "attribute": "title" },
+            { "name": "Valor de mercado", "selector": ".rechts.hauptlink a", "attribute": "textContent" }
+        ]
+    },
+    "output_file": "milan.xlsx"
+}
