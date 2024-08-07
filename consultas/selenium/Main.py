@@ -31,6 +31,13 @@ def main(config_file):
            })
 
        scrapper.fetch_data_structure(structure_selector, row_selector, columns)
+
+       if 'post_data_actions' in config:
+           for action in config['post_data_actions']:
+               selector = (getattr(By, action['selector_type']), action['selector_value'])
+               scrapper.perform_action(selector, action['action_type'], action.get('value'))
+               scrapper.fetch_data_structure(structure_selector, row_selector, columns)
+               
        data = scrapper.get_data()
 
        print(f'Datos extraídos: {data}')
@@ -41,6 +48,8 @@ def main(config_file):
        scrapper.close()
 
 if __name__ == '__main__':
-    config_file = os.path.join(os.path.dirname(__file__), 'json/world-cup.json')
     #config_file = os.path.join(os.path.dirname(__file__), 'json/milan.json')
+    #config_file = os.path.join(os.path.dirname(__file__), 'json/world-cup.json')
+    config_file = os.path.join(os.path.dirname(__file__), 'json/videogames.json')
+
     main(config_file)

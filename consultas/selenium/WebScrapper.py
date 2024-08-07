@@ -3,12 +3,13 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.action_chains import ActionChains
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 import time
 
 class WebScrapper:
     def __init__(self):
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        self.driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()))
         self.data = []
 
     def load_page(self, url):
@@ -17,14 +18,21 @@ class WebScrapper:
 
     def perform_action(self, element_selector, action_type, value=None):
         wait = WebDriverWait(self.driver, 20)
-        element = wait.until(EC.element_to_be_clickable(element_selector))
 
-        if action_type == 'click':
-            element.click()
-        elif action_type == 'send_keys' and value:
-            element.send_keys(value)
+        if action_type == 'scroll':
+            self.scroll_to_element(element_selector)
         else:
-            raise ValueError('Acción no soportada')
+            element = wait.until(EC.presence_of_element_located(element_selector))
+
+            if action_type == 'click':
+                element = wait.until(EC.element_to_be_clickable(element_selector))
+                element.click()
+            elif action_type == 'send_keys' and value:
+                element.send_keys(value)
+            elif action_type == 'hover':
+                ActionChains(self.driver).move_to_element(element).perform()
+            else:
+                raise ValueError('Acción no soportada')
         
         time.sleep(5)
 
@@ -68,6 +76,10 @@ class WebScrapper:
 
         except Exception as e:
             print(f'Error al obtener los datos de la tabla: {e}')
+
+    def scroll_to_element(self, element_selector):
+        element = self.driver.find_element(*element_selector)
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
 
     def get_data(self):
         return self.data

@@ -1,0 +1,49 @@
+{
+    "search_url": "https://vandal.elespanol.com/",
+    "actions": [
+        {
+            "selector_type": "ID",
+            "selector_value": "didomi-notice-agree-button",
+            "action_type": "click"
+        },
+        {
+            "selector_type": "ID",
+            "selector_value": "link-seccion-0",
+            "action_type": "hover"
+        },
+        {
+            "selector_type": "CSS_SELECTOR",
+            "selector_value": "#links-seccion-0 a[title='Rankings ']",
+            "action_type": "click"
+        },
+        {
+            "selector_type": "CSS_SELECTOR",
+            "selector_value": ".dropdown[data-target='dropdown-plataforma']",
+            "action_type": "click"
+        },
+        {
+            "selector_type": "CSS_SELECTOR",
+            "selector_value": "#dropdown-plataforma a[title='Ranking de juegos para Xbox One']",
+            "action_type": "click"
+        }
+    ],
+    "data_structure": {
+        "selector_type": "CSS_SELECTOR",
+        "selector_value": "table.tablestriped4 tbody",
+        "row_selector": "tr",
+        "columns": [
+            { "name": "Puesto", "selector": "td.tn18b div.tcenter", "attribute": "textContent" },
+            { "name": "Nombre del juego", "selector": "td.ta14b div b a", "attribute": "textContent" },
+            { "name": "Calificación", "selector": "td div.circuloanalisis_saga a", "attribute": "textContent" },
+            { "name": "Descripción", "selector": "td p", "attribute": "textContent" }
+        ]
+    },
+    "post_data_actions": [
+        {
+            "selector_type": "XPATH",
+            "selector_value": "//a[contains(text(), 'Siguientes 100 puestos')]",
+            "action_type": "click"
+        }
+    ],
+    "output_file": "videogames.xlsx"
+}
