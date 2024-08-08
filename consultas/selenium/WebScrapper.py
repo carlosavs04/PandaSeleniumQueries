@@ -16,28 +16,32 @@ class WebScrapper:
         self.driver.get(url)
         self.driver.maximize_window()
 
-    def perform_action(self, element_selector, action_type, value=None):
+    def perform_action(self, action, data_structure):
         wait = WebDriverWait(self.driver, 20)
 
-        if action_type == 'scroll':
-            self.scroll_to_element(element_selector)
+        if action['action_type'] == 'scroll':
+            self.scroll_to_element((getattr(By, action['selector_type']), action['selector_value']))
+        elif action['action_type'] == 'fetch_data':
+            self.fetch_data_structure(data_structure['selector_type'], data_structure['selector_value'], data_structure['row_selector'], data_structure['columns'])
         else:
+            element_selector = (getattr(By, action['selector_type']), action['selector_value'])
             element = wait.until(EC.presence_of_element_located(element_selector))
 
-            if action_type == 'click':
+            if action['action_type'] == 'click':
                 element = wait.until(EC.element_to_be_clickable(element_selector))
                 element.click()
-            elif action_type == 'send_keys' and value:
-                element.send_keys(value)
-            elif action_type == 'hover':
+            elif action['action_type'] == 'send_keys' and 'value' in action:
+                element.send_keys(action['value'])
+            elif action['action_type'] == 'hover':
                 ActionChains(self.driver).move_to_element(element).perform()
             else:
                 raise ValueError('Acción no soportada')
         
         time.sleep(5)
 
-    def fetch_data_structure(self, structure_selector, row_selector, columns):
+    def fetch_data_structure(self, selector_type, selector_value, row_selector, columns):
         try:
+            structure_selector = (getattr(By, selector_type), selector_value)
             structure = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(structure_selector))
             rows = structure.find_elements(By.CSS_SELECTOR, row_selector)
 

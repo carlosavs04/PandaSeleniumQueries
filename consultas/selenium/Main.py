@@ -14,29 +14,7 @@ def main(config_file):
        scrapper.load_page(config['search_url'])
 
        for action in config['actions']:
-           selector = (getattr(By, action['selector_type']), action['selector_value'])
-           scrapper.perform_action(selector, action['action_type'], action.get('value'))
-
-       time.sleep(5)
-
-       structure_selector = (getattr(By, config['data_structure']['selector_type']), config['data_structure']['selector_value'])
-       row_selector = config['data_structure']['row_selector']
-
-       columns = []
-       for col in config['data_structure']['columns']:
-           columns.append({
-               'name': col['name'],
-               'selector': col['selector'],
-               'attribute': col['attribute']
-           })
-
-       scrapper.fetch_data_structure(structure_selector, row_selector, columns)
-
-       if 'post_data_actions' in config:
-           for action in config['post_data_actions']:
-               selector = (getattr(By, action['selector_type']), action['selector_value'])
-               scrapper.perform_action(selector, action['action_type'], action.get('value'))
-               scrapper.fetch_data_structure(structure_selector, row_selector, columns)
+           scrapper.perform_action(action, config['data_structure'])
                
        data = scrapper.get_data()
 

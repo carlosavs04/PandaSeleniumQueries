@@ -16,6 +16,9 @@
             "selector_type": "CSS_SELECTOR",
             "selector_value": ".items tbody tr:nth-child(1) .hauptlink a",
             "action_type": "click"
+        },
+        {
+            "action_type": "fetch_data"
         }
     ],
     "data_structure": {
