@@ -25,58 +25,66 @@ class WebScrapper:
             self.fetch_data_structure(data_structure['selector_type'], data_structure['selector_value'], data_structure['row_selector'], data_structure['columns'])
         else:
             element_selector = (getattr(By, action['selector_type']), action['selector_value'])
-            element = wait.until(EC.presence_of_element_located(element_selector))
 
-            if action['action_type'] == 'click':
-                element = wait.until(EC.element_to_be_clickable(element_selector))
-                element.click()
-            elif action['action_type'] == 'send_keys' and 'value' in action:
-                element.send_keys(action['value'])
-            elif action['action_type'] == 'hover':
-                ActionChains(self.driver).move_to_element(element).perform()
+            if action.get('repeat', False):
+                elements = wait.until(EC.presence_of_all_elements_located(element_selector))
+                for element in elements:
+                    self.perform_individual_action(element, action)
             else:
-                raise ValueError('Acción no soportada')
-        
-        time.sleep(5)
+                element = wait.until(EC.presence_of_element_located(element_selector))
+                self.perform_individual_action(element, action)
 
+            time.sleep(5)
+
+    def perform_individual_action(self, element, action):
+        if action['action_type'] == 'click':
+            element = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(element))
+            element.click()
+        elif action['action_type'] == 'send_keys' and 'value' in action:
+            element.send_keys(action['value'])
+        elif action['action_type'] == 'hover':
+            ActionChains(self.driver).move_to_element(element).perform()
+        else:
+            raise ValueError('Acción no soportada')
+        
     def fetch_data_structure(self, selector_type, selector_value, row_selector, columns):
         try:
             structure_selector = (getattr(By, selector_type), selector_value)
             structure = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(structure_selector))
             rows = structure.find_elements(By.CSS_SELECTOR, row_selector)
-
+            
             for row in rows:
-                row_data = {}
-                valid_row = True
-                for column_info in columns:
-                    column_name = column_info['name']
-                    column_selector = column_info['selector']
-                    attribute = column_info['attribute']
-                    try:
-                        cell = row.find_element(By.CSS_SELECTOR, column_selector)
-                        if cell:
-                            if attribute == 'textContent':
-                                cell_value = cell.text.strip()
-                            elif attribute == 'title':
-                                cell_value = cell.get_attribute('title').strip()
+                if row.is_displayed():
+                    row_data = {}
+                    valid_row = True
+                    for column_info in columns:
+                        column_name = column_info['name']
+                        column_selector = column_info['selector']
+                        attribute = column_info['attribute']
+                        try:
+                            cell = row.find_element(By.CSS_SELECTOR, column_selector)
+                            if cell:
+                                if attribute == 'textContent':
+                                    cell_value = cell.text.strip()
+                                elif attribute == 'title':
+                                    cell_value = cell.get_attribute('title').strip()
+                                else:
+                                    cell_value = cell.get_attribute(attribute).strip()
+
+                                if cell_value in ['', None]:
+                                    valid_row = False
+
+                                row_data[column_name] = cell_value
                             else:
-                                cell_value = cell.get_attribute(attribute).strip()
-
-                            if cell_value in ['', None]:
+                                row_data[column_name] = None
                                 valid_row = False
-                            
-                            row_data[column_name] = cell_value
 
-                        else:
+                        except Exception as e:
                             row_data[column_name] = None
                             valid_row = False
 
-                    except Exception as e:
-                        row_data[column_name] = None
-                        valid_row = False
-
-                if valid_row:
-                    self.data.append(row_data)
+                    if valid_row:
+                        self.data.append(row_data)
 
         except Exception as e:
             print(f'Error al obtener los datos de la tabla: {e}')

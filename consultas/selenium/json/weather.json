@@ -1,0 +1,92 @@
+{
+    "search_url": "https://www.meteored.mx/",
+    "actions": [
+        {
+            "selector_type": "ID",
+            "selector_value": "search_pc",
+            "action_type": "send_keys",
+            "value": "Torreón"
+        },
+        {
+            "selector_type": "XPATH",
+            "selector_value": "//li[contains(@tabindex, '2')]//span[contains(text(), 'Torreón')]",
+            "action_type": "click"
+        },
+        {
+            "selector_type": "XPATH",
+            "selector_value": "//span[@class='col day_col']//span[contains(text(), 'Mañana')]",
+            "action_type": "click"
+        },
+        {
+            "action_type": "fetch_data",
+            "file_suffix": "torreon"
+        },
+        {
+            "action_type": "scroll",
+            "selector_type": "TAG_NAME",
+            "selector_value": "body"
+        },
+        {
+            "selector_type": "ID",
+            "selector_value": "search_pc",
+            "action_type": "send_keys",
+            "value": "Paris"
+        },
+        {
+            "selector_type": "XPATH",
+            "selector_value": "//li[contains(@tabindex, '2')]//span[contains(text(), 'Paris')]",
+            "action_type": "click"
+        },
+        {
+            "selector_type": "XPATH",
+            "selector_value": "//span[@class='col day_col']//span[contains(text(), 'Mañana')]",
+            "action_type": "click"
+        },
+        {
+            "action_type": "fetch_data",
+            "file_suffix": "paris"
+        },
+        {
+            "action_type": "scroll",
+            "selector_type": "TAG_NAME",
+            "selector_value": "body"
+        },
+        {
+            "selector_type": "ID",
+            "selector_value": "search_pc",
+            "action_type": "send_keys",
+            "value": "Londres"
+        },
+        {
+            "selector_type": "XPATH",
+            "selector_value": "//li[contains(@tabindex, '2')]//span[contains(text(), 'Londres')]",
+            "action_type": "click"
+        },
+        {
+            "selector_type": "XPATH",
+            "selector_value": "//span[@class='col day_col']//span[contains(text(), 'Mañana')]",
+            "action_type": "click"
+        },
+        {
+            "action_type": "fetch_data",
+            "file_suffix": "londres"
+        }
+    ],
+    "data_structure": {
+        "selector_type": "CSS_SELECTOR",
+        "selector_value": "table.tabla-horas.dos-semanas",
+        "row_selector": "tbody tr",
+        "columns": [
+            { "name": "Hora", "selector": "td:nth-child(2) span.text-princ", "attribute": "textContent" },
+            { "name": "Grados", "selector": "td.title-mod.changeUnitT", "attribute": "textContent" },
+            { "name": "Clima", "selector": "td.descripcion strong", "attribute": "textContent" },
+            { "name": "Sensación térmica", "selector": "td.descripcion span.changeUnitT", "attribute": "textContent" },
+            { "name": "Dirección del viento", "selector": "td div.wind strong", "attribute": "textContent" },
+            { "name": "Velocidad del viento", "selector": "td div.wind span.velocidad span.changeUnitW", "attribute": "textContent" },
+            { "name": "Índice UV", "selector": "td span.row span.col.velocidad strong", "attribute": "textContent" },
+            { "name": "FPS", "selector": "td span.row span.col.velocidad span.fps-valor", "attribute": "textContent" }
+        ]
+    },
+    "output_file": "weather.xlsx",
+    "specialized_flow": true
+}
